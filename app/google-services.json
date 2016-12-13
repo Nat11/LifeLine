@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "732649337433",
+    "firebase_url": "https://lifeline-19bee.firebaseio.com",
+    "project_id": "lifeline-19bee",
+    "storage_bucket": "lifeline-19bee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732649337433:android:3e32d637c4440873",
+        "android_client_info": {
+          "package_name": "natalio.com.bloodbank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732649337433-61njar44jdkpql1ka13rcpvl6r1u7o57.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "natalio.com.bloodbank",
+            "certificate_hash": "DD7544856A5C137389367BB8410B444F5C087DF3"
+          }
+        },
+        {
+          "client_id": "732649337433-nchfa3volk4t34fv10g4ll0pfmhj72c6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOAH8kvedcGzyNfgoiVGRcTQiqbJWmg-M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732649337433-nchfa3volk4t34fv10g4ll0pfmhj72c6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
