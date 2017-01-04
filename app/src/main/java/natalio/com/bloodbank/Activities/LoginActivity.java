@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText etPass;
     private EditText etEmail;
     private Session session;
+    private Button btnLogin, btnRegister, btnReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         session = new Session(this);
 
-        findViewById(R.id.btnLogin).setOnClickListener(this);
-        findViewById(R.id.btnRegister).setOnClickListener(this);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnReset = (Button) findViewById(R.id.btnForgetPass);
+        btnLogin.setOnClickListener(this);
+        btnRegister.setOnClickListener(this);
+        btnReset.setOnClickListener(this);
+
         Log.d("Session", String.valueOf(session.loggedIn()));
         if (session.loggedIn()) {
             startActivity(new Intent(LoginActivity.this, UserActivity.class));
@@ -105,6 +112,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //signUserOut();
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
                 break;
+
+            case R.id.btnForgetPass:
+                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
         }
     }
 

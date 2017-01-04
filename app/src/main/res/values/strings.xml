@@ -41,5 +41,10 @@
     <string name="sign_in">Sign In</string>
     <string name="title_activity_user">UserActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="DonorStatus">You are currently a donor, if you wish to change your status please check this box</string>
+    <string name="NonDonorStatus">You are not currently a donor, if you wish to change your status please check this box</string>
+    <string name="back_update">You did not update your information, press Back if you wish to go back</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="passwrod_reset_instructions">We just need your registered email to send your password reset instructions</string>
 
 </resources>

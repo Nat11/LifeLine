@@ -3,6 +3,8 @@ package natalio.com.bloodbank.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.Layout;
@@ -39,7 +41,6 @@ public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
     private Session session;
     private TextView etUser;
     private TextView NavUser;
@@ -49,7 +50,7 @@ public class UserActivity extends AppCompatActivity
     private TextView etBloodType;
     private TextView etDonor;
     private Button btnListUsers;
-    private Button btnLogout;
+    private Button btnUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,6 @@ public class UserActivity extends AppCompatActivity
 
         NavUser = (TextView) header.findViewById(R.id.textUser);
 
-        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         session = new Session(this);
         if (!session.loggedIn()) {
@@ -89,37 +89,46 @@ public class UserActivity extends AppCompatActivity
         etBloodType = (TextView) findViewById(R.id.etBloodType);
         etDonor = (TextView) findViewById(R.id.etIsDonor);
         btnListUsers = (Button) findViewById(R.id.btnListUsers);
+        btnUpdate = (Button) findViewById(R.id.btnUpdate);
 
-        FirebaseUser user = mAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    Log.d("UserInfo", "Has children");
-                    Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
-                    etUser.setText(values.get("username").toString());
-                    NavUser.setText(values.get("username").toString());
-                    etAddr.setText(values.get("address").toString());
-                    etPhoneNum.setText(values.get("phone").toString());
-                    etGender.setText(values.get("gender").toString());
-                    etBloodType.setText(values.get("bloodType").toString());
-                    etDonor.setText(values.get("donor").toString());
+        if (user != null) {
+            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()) {
+                        Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
+                        etUser.setText(values.get("username"));
+                        NavUser.setText(values.get("username"));
+                        etAddr.setText(values.get("address"));
+                        etPhoneNum.setText(values.get("phone"));
+                        etGender.setText(values.get("gender"));
+                        etBloodType.setText(values.get("bloodType"));
+                        etDonor.setText(values.get("donor"));
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
 
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
-
-            }
-        });
+            });
+        }
 
         btnListUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(UserActivity.this, ListUsersActivity.class));
+            }
+        });
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(UserActivity.this, UpdateInfoActivity.class));
             }
         });
     }
@@ -136,13 +145,15 @@ public class UserActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finish();
+            moveTaskToBack(true);
+            //startActivity(new Intent(UserActivity.this, MainActivity.class));
         }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

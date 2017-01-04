@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,33 +23,101 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import natalio.com.bloodbank.R;
 
 public class ListUsersActivity extends AppCompatActivity {
 
+    private static final String TAG = "user";
     private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    public static List<User> users = new ArrayList<>();
-    public static final String USERNAME = "USERNAME";
+    static Map<String, String> users = new HashMap<>();
+    public static final String USER = "USER";
     public static List<String> userNames = new ArrayList<>();
+    public static List<String> ids = new ArrayList<>();
     private EditText etSearch;
     ArrayAdapter<String> adapter;
-
+    private static String currentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_users);
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
         final ListView lv = (ListView) findViewById(R.id.listView);
         etSearch = (EditText) findViewById(R.id.etSearch);
+        etSearch.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES); // make first character uppercase to match bloodtype in database
 
-        mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+
+        final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence charSequence, int i, int i1, int i2) {
+
+                users.clear();
+                userNames.clear();
+                lv.setAdapter(null);
+
+                if (charSequence.length() > 0) {
+                    mDatabase.orderByChild("bloodType"). startAt(charSequence.toString()).
+                            addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    users.clear();
+                                    userNames.clear();
+                                    User currentUser = dataSnapshot.child(current.getUid()).getValue(User.class);
+                                    currentId = current.getUid();
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        User user = snapshot.getValue(User.class);
+                                        users.put(snapshot.getKey(), user.getUsername());
+                                    }
+                                    users.remove(currentId); //do not show current user in search filter
+
+                                    userNames = new ArrayList<String>(users.values());
+                                    ids = new ArrayList<String>(users.keySet());
+
+                                    adapter = new ArrayAdapter<>(
+                                            ListUsersActivity.this,
+                                            android.R.layout.simple_list_item_1,
+                                            userNames);
+
+                                    lv.setAdapter(adapter);
+                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                            Intent intent = new Intent(ListUsersActivity.this, DetailActivity.class);
+                                            String id = ids.get(i);
+                                            intent.putExtra(USER, id);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+        /*mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             FirebaseUser current = mAuth.getInstance().getCurrentUser();
 
             @Override
@@ -106,7 +176,18 @@ public class ListUsersActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 }

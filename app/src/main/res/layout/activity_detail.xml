@@ -12,20 +12,48 @@
 
 
     <TextView
-        android:id="@+id/userText"
+        android:id="@+id/tvBloodType"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="Username"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/BloodType"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userText"
         android:gravity="center"
         android:text="Blood Type"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBloodType"
+        android:gravity="center_horizontal"
+        android:text="Username"
         android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvBloodType"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="54dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/tvPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvAddress"
+        android:layout_below="@+id/tvAddress"
+        android:layout_marginTop="18dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/btnSendEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:text="Send Email to donor" />
 
 </RelativeLayout>

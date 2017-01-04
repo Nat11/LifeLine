@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:hint="Search Donor"
+        android:hint="Search for donors by blood type "
         android:textColor="@color/white" />
 
     <ListView
