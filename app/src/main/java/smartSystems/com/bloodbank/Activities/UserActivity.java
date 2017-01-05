@@ -1,15 +1,9 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,12 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.Map;
 
-import natalio.com.bloodbank.R;
-import natalio.com.bloodbank.Session.Session;
+import smartSystems.com.bloodBank.R;
+import smartSystems.com.bloodBank.Session.Session;
 
 public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +41,6 @@ public class UserActivity extends AppCompatActivity
     private TextView etBloodType;
     private TextView etDonor;
     private Button btnListUsers;
-    private Button btnUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +68,7 @@ public class UserActivity extends AppCompatActivity
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         session = new Session(this);
+
         if (!session.loggedIn()) {
             logout();
         }
@@ -89,7 +80,6 @@ public class UserActivity extends AppCompatActivity
         etBloodType = (TextView) findViewById(R.id.etBloodType);
         etDonor = (TextView) findViewById(R.id.etIsDonor);
         btnListUsers = (Button) findViewById(R.id.btnListUsers);
-        btnUpdate = (Button) findViewById(R.id.btnUpdate);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -125,12 +115,6 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(UserActivity.this, UpdateInfoActivity.class));
-            }
-        });
     }
 
     private void logout() {
@@ -157,7 +141,7 @@ public class UserActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_import) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
@@ -165,7 +149,8 @@ public class UserActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_update) {
+            startActivity(new Intent(UserActivity.this, UpdateInfoActivity.class));
 
         } else if (id == R.id.nav_logout) {
             logout();

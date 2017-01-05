@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:scrollbarStyle="outsideOverlay"
-    tools:context="natalio.com.bloodbank.Activities.LoginActivity">
+    tools:context="smartSystems.com.bloodBank.Activities.LoginActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

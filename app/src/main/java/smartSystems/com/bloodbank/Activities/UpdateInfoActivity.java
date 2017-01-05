@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +18,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import natalio.com.bloodbank.R;
-import natalio.com.bloodbank.Session.Session;
+import smartSystems.com.bloodBank.R;
+import smartSystems.com.bloodBank.Session.Session;
 
 public class UpdateInfoActivity extends AppCompatActivity {
 

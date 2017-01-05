@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "732649337433",
-    "firebase_url": "https://lifeline-19bee.firebaseio.com",
-    "project_id": "lifeline-19bee",
-    "storage_bucket": "lifeline-19bee.appspot.com"
+    "project_number": "137581839478",
+    "firebase_url": "https://lifeline-b28aa.firebaseio.com",
+    "project_id": "lifeline-b28aa",
+    "storage_bucket": "lifeline-b28aa.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:732649337433:android:3e32d637c4440873",
+        "mobilesdk_app_id": "1:137581839478:android:20fcdb2cc0a454e9",
         "android_client_info": {
-          "package_name": "natalio.com.bloodbank"
+          "package_name": "smartSystems.com.bloodBank"
         }
       },
       "oauth_client": [
         {
-          "client_id": "732649337433-61njar44jdkpql1ka13rcpvl6r1u7o57.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "natalio.com.bloodbank",
-            "certificate_hash": "DD7544856A5C137389367BB8410B444F5C087DF3"
-          }
-        },
-        {
-          "client_id": "732649337433-nchfa3volk4t34fv10g4ll0pfmhj72c6.apps.googleusercontent.com",
+          "client_id": "137581839478-jtm6gouqcopo4ee0qaj82cfq8a8h6cud.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBOAH8kvedcGzyNfgoiVGRcTQiqbJWmg-M"
+          "current_key": "AIzaSyB9rJ36wuNO7CgBx1K1FO9IO1eNQGfSV-4"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "732649337433-nchfa3volk4t34fv10g4ll0pfmhj72c6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

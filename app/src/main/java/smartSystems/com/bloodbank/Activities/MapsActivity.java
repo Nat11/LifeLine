@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 

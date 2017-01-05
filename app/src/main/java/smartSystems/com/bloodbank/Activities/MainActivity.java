@@ -1,16 +1,13 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.R;
 
 public class MainActivity extends AppCompatActivity {
 

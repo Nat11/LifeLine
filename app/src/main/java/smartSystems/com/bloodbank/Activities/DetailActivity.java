@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,10 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import natalio.com.bloodbank.Model.User;
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.Model.User;
+import smartSystems.com.bloodBank.R;
 
 public class DetailActivity extends AppCompatActivity {
 

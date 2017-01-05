@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Session;
+package smartSystems.com.bloodBank.Session;
 
 import android.content.Context;
 import android.content.SharedPreferences;

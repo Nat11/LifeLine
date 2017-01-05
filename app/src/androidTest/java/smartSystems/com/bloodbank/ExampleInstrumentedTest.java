@@ -1,4 +1,4 @@
-package natalio.com.bloodbank;
+package smartSystems.com.bloodBank;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

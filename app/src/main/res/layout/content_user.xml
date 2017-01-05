@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="natalio.com.bloodbank.Activities.UserActivity"
+    tools:context="smartSystems.com.bloodBank.Activities.UserActivity"
     tools:showIn="@layout/app_bar_user">
 
     <LinearLayout
@@ -171,13 +171,5 @@
         android:text="Search for Donors"
         android:textSize="15dp" />
 
-    <Button
-        android:id="@+id/btnUpdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update your info"
-        android:textSize="15dp"
-        android:layout_alignTop="@+id/btnListUsers"
-        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

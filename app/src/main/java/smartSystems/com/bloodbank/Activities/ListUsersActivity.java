@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,15 +6,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import natalio.com.bloodbank.Model.User;
+import smartSystems.com.bloodBank.Model.User;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.R;
 
 public class ListUsersActivity extends AppCompatActivity {
 
@@ -51,7 +49,6 @@ public class ListUsersActivity extends AppCompatActivity {
         etSearch = (EditText) findViewById(R.id.etSearch);
         etSearch.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES); // make first character uppercase to match bloodtype in database
 
-
         final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
 
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -67,7 +64,7 @@ public class ListUsersActivity extends AppCompatActivity {
                 lv.setAdapter(null);
 
                 if (charSequence.length() > 0) {
-                    mDatabase.orderByChild("bloodType"). startAt(charSequence.toString()).
+                    mDatabase.orderByChild("bloodType").equalTo(charSequence.toString()).
                             addListenerForSingleValueEvent(new ValueEventListener() {
 
                                 @Override

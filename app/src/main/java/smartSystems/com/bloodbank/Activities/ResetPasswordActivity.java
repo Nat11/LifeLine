@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.R;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 

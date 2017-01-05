@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Model;
+package smartSystems.com.bloodBank.Model;
 
 public class User {
 

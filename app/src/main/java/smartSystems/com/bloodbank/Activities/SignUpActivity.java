@@ -1,4 +1,4 @@
-package natalio.com.bloodbank.Activities;
+package smartSystems.com.bloodBank.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -7,14 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,12 +22,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import natalio.com.bloodbank.Model.User;
-import natalio.com.bloodbank.R;
+import smartSystems.com.bloodBank.Model.User;
+import smartSystems.com.bloodBank.R;
+import smartSystems.com.bloodBank.Session.Session;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private RadioButton etGender;
     private Spinner etBloodType;
     private Button etCreate;
+    private Session session;
     final String[] bloodType = new String[1];
     private CheckBox etDonor;
 
@@ -57,6 +56,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         etEmail = (EditText) findViewById(R.id.User);
         etPass = (EditText) findViewById(R.id.Password);
+        session = new Session(this);
         etAddress = (EditText) findViewById(R.id.Address);
         etPhone = (EditText) findViewById(R.id.Phone);
         etRadioGroup = (RadioGroup) findViewById(R.id.Gender);
@@ -142,11 +142,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                 if (task.isSuccessful()) {
                                     //Toast.makeText(SignUpActivity.this, "User created", Toast.LENGTH_SHORT)
                                     // .show();
+                                    session.setLoggedIn(true);
                                     FirebaseUser FbUser = task.getResult().getUser();
                                     User user = new User(email, password, address, phone, (String) etGender.getText(), bloodType[0], donor);
                                     mDatabase.child("users").child(FbUser.getUid()).setValue(user);
                                     Toast.makeText(SignUpActivity.this, "Account created", Toast.LENGTH_SHORT);
-                                    startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                                    startActivity(new Intent(SignUpActivity.this, UserActivity.class));
                                     finish();
 
                                 } else {

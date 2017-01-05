@@ -1,4 +1,4 @@
-package natalio.com.bloodbank;
+package smartSystems.com.bloodBank;
 
 import org.junit.Test;
 
