@@ -11,11 +11,6 @@ import smartSystems.com.bloodBank.R;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private static final String TAG = "SignedIn";
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

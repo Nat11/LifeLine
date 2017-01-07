@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -70,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Address address = addressList.get(0);
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        Toast.makeText(this, "Lat " + address.getLatitude() + " Long " + address.getLongitude(), Toast.LENGTH_SHORT).show();
         mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 

@@ -46,5 +46,9 @@
     <string name="back_update">You did not update your information, press Back if you wish to go back</string>
     <string name="reset_password">Reset Password</string>
     <string name="passwrod_reset_instructions">We just need your registered email to send your password reset instructions</string>
+    <string name="password">Password:</string>
+    <string name="your_email_address">Your Email Address:</string>
+    <string name="be_a_donor">I wish to be a donor</string>
+    <string name="register">Register</string>
 
 </resources>

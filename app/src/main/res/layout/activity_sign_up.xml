@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_sign_up"
     android:layout_width="match_parent"
@@ -8,9 +8,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:scrollbarStyle="outsideOverlay"
     tools:context="smartSystems.com.bloodBank.Activities.SignUpActivity">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -24,9 +25,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="Your Email Address:"
+                android:background="@android:color/transparent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:text="@string/your_email_address"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/User"
@@ -43,9 +47,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/User"
-                android:text="Password:"
+                android:text="@string/password"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/Password"
@@ -56,7 +60,6 @@
                 android:ems="10"
                 android:inputType="textPassword" />
 
-
             <TextView
                 android:id="@+id/txtAddress"
                 android:layout_width="wrap_content"
@@ -65,10 +68,10 @@
                 android:layout_below="@+id/Password"
                 android:text="@string/address"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/Address"
+            <AutoCompleteTextView
+                android:id="@+id/AutoCompleteAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -81,10 +84,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/Address"
+                android:layout_below="@+id/AutoCompleteAddress"
                 android:text="@string/phone_number"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/Phone"
@@ -109,14 +112,14 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="Male"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
                 <RadioButton
                     android:id="@+id/Female"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
             </RadioGroup>
 
@@ -127,8 +130,8 @@
                 android:layout_below="@id/Gender"
                 android:layout_marginTop="20dp"
                 android:text="@string/choose_blood"
-                android:textColor="@color/white"
-                android:textSize="20dp" />
+                android:textColor="@color/black"
+                android:textSize="20sp" />
 
             <Spinner
                 android:id="@+id/BloodType"
@@ -146,8 +149,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/BloodType"
                 android:layout_marginTop="20dp"
-                android:text="I wish to be a donor"
-                android:textSize="20dp" />
+                android:text="@string/be_a_donor"
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/btnRegister"
@@ -158,8 +161,9 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/white_button_bg"
                 android:text="@string/btn_register"
-                android:textColor="@color/primary" />
+                android:textColor="@color/primary"
+                android:textStyle="bold" />
 
         </RelativeLayout>
-    </ScrollView>
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

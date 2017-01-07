@@ -15,47 +15,64 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:windowSoftInputMode="stateHidden"
-        android:theme="@style/AppTheme.Splash">
+        android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateHidden">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBehQroaBgMc3moHKYS87c65TQHiXG2BzQ" />
+            android:value="AIzaSyBTr2kWQfjxKItqEOcdQifZYyjj_lzJcnw" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!-- android:value="AIzaSyBehQroaBgMc3moHKYS87c65TQHiXG2BzQ" -->
 
         <activity
-            android:name="smartSystems.com.bloodBank.Activities.MainActivity"
+            android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize">
+
+        </activity>
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".Activities.MainActivity"
+            android:theme="@style/AppTheme.Splash" />
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/register"
+            android:parentActivityName=".Activities.LoginActivity"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.ListUsersActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".Activities.DetailActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".Activities.UserActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_user" />
+        <activity
+            android:name=".Activities.MapsActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".Activities.UpdateInfoActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".Activities.UserActivity" />
+        <activity android:name=".Activities.ResetPasswordActivity" />
+        <activity
+            android:name=".Activities.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.LoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName="smartSystems.com.bloodBank.Activities.MainActivity" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.SignUpActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.ListUsersActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.DetailActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.UserActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_user"
-            android:theme="@style/AppTheme.Splash" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.MapsActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="smartSystems.com.bloodBank.Activities.UpdateInfoActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName="smartSystems.com.bloodBank.Activities.UserActivity" />
-        <activity android:name="smartSystems.com.bloodBank.Activities.ResetPasswordActivity" />
     </application>
 
 </manifest>
