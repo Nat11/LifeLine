@@ -96,8 +96,8 @@ public class QuickSearchActivity extends AppCompatActivity {
                             Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
                             donor = values.get("donor");
                             currentBloodType = values.get("bloodType");
-                            currentAddress = values.get("address");
-                            currentLatLng = getLatLng(currentAddress);
+                            currentAddress = values.get("address");//Get address of current user
+                            currentLatLng = getLatLng(currentAddress); //Convert address to Latitude Longitude
                         }
 
                         if (donor.equals("Yes")) {
@@ -114,7 +114,7 @@ public class QuickSearchActivity extends AppCompatActivity {
                                         double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
                                         Log.d("distance", String.valueOf(distance / 1000));
                                         Log.d("distanceMax", String.valueOf(maxDistance));
-                                        if (bloodType.equals(currentBloodType) && distance / 1000 < maxDistance) { //divise by 1000 to get distance in Kilometers
+                                        if (distance / 1000 < maxDistance) { //divise by 1000 to get distance in Kilometers
                                             users.put(snapshot.getKey(), user.getUsername());
                                         }
                                     }
@@ -122,7 +122,6 @@ public class QuickSearchActivity extends AppCompatActivity {
                                         lv.setVisibility(View.INVISIBLE);
                                         Toast.makeText(QuickSearchActivity.this, R.string.search_error_donor, Toast.LENGTH_SHORT).show();
                                     }
-
 
                                     userNames = new ArrayList<String>(users.values());
                                     adapter = new ArrayAdapter<>(

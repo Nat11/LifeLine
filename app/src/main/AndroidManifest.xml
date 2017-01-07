@@ -27,7 +27,9 @@
 
         <activity
             android:name=".Activities.MainActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="LifeLine"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay" />
         <activity
             android:name=".Activities.LoginActivity"
             android:configChanges="orientation|screenSize"
@@ -66,8 +68,8 @@
         <activity
             android:name=".Activities.UpdateInfoActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".Activities.UserActivity"
             android:label="Update information"
+            android:parentActivityName=".Activities.UserActivity"
             android:theme="@style/AppTheme.Splash.AppBarOverlay">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
