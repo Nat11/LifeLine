@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BloodBank</string>
+    <string name="app_name">LifeLine</string>
     <string name="welcome">Welcome</string>
     <string name="title_activity_sign_up">Sign Up</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -50,5 +50,14 @@
     <string name="your_email_address">Your Email Address:</string>
     <string name="be_a_donor">I wish to be a donor</string>
     <string name="register">Register</string>
+    <string name="quick_search">Quick Search</string>
+    <string name="advanced_search">Advanced Search</string>
+    <string name="quick_search_description">You can choose this option to perform a quick search that will display users having the same blood type as yours within you area range</string>
+    <string name="advanced_search_criteria">You can choose this option to perform an advanced search meeting your seach criterias</string>
+    <string name="enter_max_distance">Enter maximum distance: (Km)</string>
+    <string name="search">Search</string>
+    <string name="search_error_donor">There are no users in need of blood near your area, please change your search criteria</string>
+    <string name="search_error_receiver">There are no blood donors near your area, please change your search criteria</string>
+    <string name="begin_your_search">Begin your Search</string>
 
 </resources>

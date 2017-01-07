@@ -22,14 +22,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        findViewById(R.id.Maps).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
-            }
-        });
-
     }
 
     @Override

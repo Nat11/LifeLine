@@ -39,7 +39,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        id = getIntent().getStringExtra(ListUsersActivity.USER);
+        id = getIntent().getStringExtra(QuickSearchActivity.USER);
 
         tvUsername = (TextView) findViewById(R.id.tvUsername);
         tvBloodType = (TextView) findViewById(R.id.tvBloodType);

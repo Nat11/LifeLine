@@ -111,7 +111,7 @@ public class UserActivity extends AppCompatActivity
         btnListUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserActivity.this, ListUsersActivity.class));
+                startActivity(new Intent(UserActivity.this, SearchActivity.class));
             }
         });
 

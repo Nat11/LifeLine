@@ -27,9 +27,7 @@
 
         <activity
             android:name=".Activities.MainActivity"
-            android:configChanges="orientation|screenSize">
-
-        </activity>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".Activities.LoginActivity"
             android:configChanges="orientation|screenSize"
@@ -46,8 +44,15 @@
                 android:value="smartSystems.com.bloodBank.Activities.LoginActivity" />
         </activity>
         <activity
-            android:name=".Activities.ListUsersActivity"
-            android:configChanges="orientation|screenSize" />
+            android:name=".Activities.QuickSearchActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Quick Search"
+            android:parentActivityName=".Activities.SearchActivity"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.SearchActivity" />
+        </activity>
         <activity
             android:name=".Activities.DetailActivity"
             android:configChanges="orientation|screenSize" />
@@ -61,7 +66,13 @@
         <activity
             android:name=".Activities.UpdateInfoActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".Activities.UserActivity" />
+            android:parentActivityName=".Activities.UserActivity"
+            android:label="Update information"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.SearchActivity" />
+        </activity>
         <activity android:name=".Activities.ResetPasswordActivity" />
         <activity
             android:name=".Activities.SplashActivity"
@@ -73,6 +84,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activities.SearchActivity"
+            android:label="Choose Search options"
+            android:parentActivityName=".Activities.UserActivity"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.UserActivity" />
+        </activity>
+        <activity android:name=".Activities.AdvancedSearchActivity"></activity>
     </application>
 
 </manifest>

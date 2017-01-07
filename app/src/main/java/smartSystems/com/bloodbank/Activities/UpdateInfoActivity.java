@@ -5,11 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,11 +29,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import smartSystems.com.bloodBank.Places.PlaceArrayAdapter;
 import smartSystems.com.bloodBank.R;
 import smartSystems.com.bloodBank.Session.Session;
 
-public class UpdateInfoActivity extends AppCompatActivity {
+public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
 
+    private static final String LOG_TAG = "UpdateInfoActivity";
     private static final String TAG = "Donor";
     private static DatabaseReference mDatabase;
     private static FirebaseAuth mAuth;
@@ -33,6 +47,12 @@ public class UpdateInfoActivity extends AppCompatActivity {
     private static String newAddress, newPhone, newIsDonor;
     private static boolean isDonor = false;
     private static FirebaseUser user;
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+    private AutoCompleteTextView mAutocompleteAddress; //Address auto complete google API Places
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceArrayAdapter mPlaceArrayAdapter;
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +66,7 @@ public class UpdateInfoActivity extends AppCompatActivity {
         }
         user = mAuth.getInstance().getCurrentUser();
 
-        etNewAddress = (EditText) findViewById(R.id.etNewAddress);
+        mAutocompleteAddress = (AutoCompleteTextView) findViewById(R.id.etNewAddress);
         etNewPhone = (EditText) findViewById(R.id.etNewPhone);
         newDonor = (CheckBox) findViewById(R.id.newDonor);
         btnUpdate = (Button) findViewById(R.id.btnUpdateInfo);
@@ -73,10 +93,22 @@ public class UpdateInfoActivity extends AppCompatActivity {
                     }
                 });
 
+        mGoogleApiClient = new GoogleApiClient.Builder(UpdateInfoActivity.this)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
+                .addConnectionCallbacks(this)
+                .build();
+
+        mAutocompleteAddress.setThreshold(3);
+        mAutocompleteAddress.setOnItemClickListener(mAutocompleteClickListener);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
+        mAutocompleteAddress.setAdapter(mPlaceArrayAdapter);
+
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newAddress = etNewAddress.getText().toString();
+                newAddress = mAutocompleteAddress.getText().toString();
                 newPhone = etNewPhone.getText().toString();
 
                 if (!newAddress.isEmpty())
@@ -102,8 +134,36 @@ public class UpdateInfoActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListener
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+            final String placeId = String.valueOf(item.placeId);
+            Log.i(LOG_TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            Log.i(LOG_TAG, "Fetching details for ID: " + item.placeId);
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(LOG_TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            CharSequence attributions = places.getAttributions();
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -137,5 +197,28 @@ public class UpdateInfoActivity extends AppCompatActivity {
         session.setLoggedIn(false);
         finish();
         startActivity(new Intent(UpdateInfoActivity.this, LoginActivity.class));
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
+        Log.i(LOG_TAG, "Google Places API connected.");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
+
+        Toast.makeText(this,
+                "Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode(),
+                Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPlaceArrayAdapter.setGoogleApiClient(null);
+        Log.e(LOG_TAG, "Google Places API connection suspended.");
     }
 }
