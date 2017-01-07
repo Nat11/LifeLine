@@ -29,9 +29,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="137dp"
-        android:background="@drawable/white_button_bg"
+        android:background="@drawable/red_button_bg"
         android:text="Proceed to next step"
-        android:textColor="@color/primary"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <Button
@@ -39,9 +39,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="43dp"
-        android:background="@drawable/white_button_bg"
+        android:background="@drawable/red_button_bg"
         android:text="Maps"
-        android:textColor="@color/primary"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />

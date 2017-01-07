@@ -159,9 +159,9 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/Donor"
                 android:layout_marginTop="15dp"
-                android:background="@drawable/white_button_bg"
+                android:background="@drawable/red_button_bg"
                 android:text="@string/btn_register"
-                android:textColor="@color/primary"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
         </RelativeLayout>
