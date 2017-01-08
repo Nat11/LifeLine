@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -28,7 +29,7 @@
         <activity
             android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:label="LifeLine"
+            android:label="Blood Bank"
             android:theme="@style/AppTheme.Splash.AppBarOverlay" />
         <activity
             android:name=".Activities.LoginActivity"
@@ -64,7 +65,14 @@
             android:label="@string/title_activity_user" />
         <activity
             android:name=".Activities.MapsActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Maps view"
+            android:parentActivityName=".Activities.QuickSearchActivity"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.QuickSearchActivity" />
+        </activity>
         <activity
             android:name=".Activities.UpdateInfoActivity"
             android:configChanges="orientation|screenSize"
