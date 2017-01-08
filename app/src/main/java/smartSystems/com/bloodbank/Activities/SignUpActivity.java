@@ -218,7 +218,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                     User user = new User(email, password, address, phone, (String) etGender.getText(), bloodType[0], donor);
                                     mDatabase.child("users").child(FbUser.getUid()).setValue(user);
                                     Toast.makeText(SignUpActivity.this, "Account created", Toast.LENGTH_LONG);
-                                    startActivity(new Intent(SignUpActivity.this, UserActivity.class));
+                                    startActivity(new Intent(SignUpActivity.this, LoadingScreenActivity.class));
                                     finish();
 
                                 } else {

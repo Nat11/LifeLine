@@ -6,7 +6,6 @@ import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +44,7 @@ public class QuickSearchActivity extends AppCompatActivity {
     static Map<String, String> users = new HashMap<>();
     public static final String USER = "USER";
     public static final String ADDRESSES = "ADDRESSES";
-    public static List<String> userNames = new ArrayList<>();
+    public static List<String> userDetails = new ArrayList<>();
     public static List<LatLng> addresses = new ArrayList<>();
     public static List<String> ids = new ArrayList<>();
     private EditText etSearch, etDistance;
@@ -110,11 +109,14 @@ public class QuickSearchActivity extends AppCompatActivity {
 
                 if (charSequence.length() == 0) {
                     btnMaps.setVisibility(View.INVISIBLE);
-                    return;
                 }
 
-                if (charSequence.length() > 0) {
+                else if (charSequence.length() >= 0 && charSequence.toString().matches(".*[a-z].*")) {
+                    btnMaps.setVisibility(View.INVISIBLE);
+                    lv.setVisibility(View.INVISIBLE);
+                } else if (charSequence.length() > 0) {
                     clearLists();
+                    btnMaps.setVisibility(View.INVISIBLE);
 
                     mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -132,11 +134,11 @@ public class QuickSearchActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         clearLists();
+                                        btnMaps.setVisibility(View.INVISIBLE);
 
                                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                             User user = snapshot.getValue(User.class);
                                             address = user.getAddress();
-                                            bloodType = user.getBloodType();
                                             double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
                                             if (distance / 1000 < maxDistance) { //divise by 1000 to get distance in Kilometers
                                                 users.put(snapshot.getKey(), user.getBloodType() + " : " + user.getUsername()); //display bloodType and username in ListView
@@ -145,37 +147,39 @@ public class QuickSearchActivity extends AppCompatActivity {
                                         }
                                         if (users.size() == 0) {
                                             lv.setVisibility(View.INVISIBLE);
-                                        }
-                                        btnMaps.setVisibility(View.VISIBLE);
-                                        userNames = new ArrayList<String>(users.values());
-                                        Collections.sort(userNames);//Sort userNames by values
-                                        adapter = new ArrayAdapter<>(
-                                                QuickSearchActivity.this,
-                                                android.R.layout.simple_list_item_1,
-                                                userNames);
+                                            btnMaps.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            btnMaps.setVisibility(View.VISIBLE);
+                                            userDetails = new ArrayList<String>(users.values());
+                                            Collections.sort(userDetails);//Sort userDetails by values
+                                            adapter = new ArrayAdapter<>(
+                                                    QuickSearchActivity.this,
+                                                    android.R.layout.simple_list_item_1,
+                                                    userDetails);
 
-                                        ids = new ArrayList<String>(users.keySet());
-                                        lv.setAdapter(adapter);
-                                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            ids = new ArrayList<String>(users.keySet());
+                                            lv.setAdapter(adapter);
+                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                Intent intent = new Intent(QuickSearchActivity.this, DetailActivity.class);
-                                                String id = ids.get(i);
-                                                intent.putExtra(USER, id);
-                                                startActivity(intent);
-                                            }
-                                        });
-
-                                        btnMaps.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                if (addresses.size() == 0) {
-                                                    Toast.makeText(QuickSearchActivity.this, R.string.search_error_donor, Toast.LENGTH_SHORT).show();
+                                                @Override
+                                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                    Intent intent = new Intent(QuickSearchActivity.this, DetailActivity.class);
+                                                    String id = ids.get(i);
+                                                    intent.putExtra(USER, id);
+                                                    startActivity(intent);
                                                 }
-                                                goToMaps(addresses);
-                                            }
-                                        });
+                                            });
+
+                                            btnMaps.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    if (addresses.size() == 0) {
+                                                        Toast.makeText(QuickSearchActivity.this, R.string.search_error_donor, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    goToMaps(addresses);
+                                                }
+                                            });
+                                        }
                                     }
 
                                     @Override
@@ -190,6 +194,7 @@ public class QuickSearchActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         clearLists();
+                                        btnMaps.setVisibility(View.INVISIBLE);
 
                                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                             User user = snapshot.getValue(User.class);
@@ -202,36 +207,38 @@ public class QuickSearchActivity extends AppCompatActivity {
                                         }
                                         if (users.size() == 0) {
                                             lv.setVisibility(View.INVISIBLE);
+                                            btnMaps.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            btnMaps.setVisibility(View.VISIBLE);
+                                            userDetails = new ArrayList<String>(users.values());
+                                            Collections.sort(userDetails);//Sort userDetails by values
+                                            adapter = new ArrayAdapter<>(
+                                                    QuickSearchActivity.this,
+                                                    android.R.layout.simple_list_item_1,
+                                                    userDetails);
+
+                                            ids = new ArrayList<String>(users.keySet());
+                                            lv.setAdapter(adapter);
+                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                    Intent intent = new Intent(QuickSearchActivity.this, DetailActivity.class);
+                                                    String id = ids.get(i);
+                                                    intent.putExtra(USER, id);
+                                                    startActivity(intent);
+                                                }
+                                            });
+
+                                            btnMaps.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    if (addresses.size() == 0) {
+                                                        Toast.makeText(QuickSearchActivity.this, R.string.search_error_donor, Toast.LENGTH_SHORT).show();
+                                                    } else
+                                                        goToMaps(addresses);
+                                                }
+                                            });
                                         }
-
-                                        btnMaps.setVisibility(View.VISIBLE);
-                                        userNames = new ArrayList<String>(users.values());
-                                        adapter = new ArrayAdapter<>(
-                                                QuickSearchActivity.this,
-                                                android.R.layout.simple_list_item_1,
-                                                userNames);
-
-                                        ids = new ArrayList<String>(users.keySet());
-                                        lv.setAdapter(adapter);
-                                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                Intent intent = new Intent(QuickSearchActivity.this, DetailActivity.class);
-                                                String id = ids.get(i);
-                                                intent.putExtra(USER, id);
-                                                startActivity(intent);
-                                            }
-                                        });
-
-                                        btnMaps.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                if (addresses.size() == 0) {
-                                                    Toast.makeText(QuickSearchActivity.this, R.string.search_error_donor, Toast.LENGTH_SHORT).show();
-                                                } else
-                                                    goToMaps(addresses);
-                                            }
-                                        });
                                     }
 
                                     @Override
@@ -277,6 +284,11 @@ public class QuickSearchActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -293,7 +305,9 @@ public class QuickSearchActivity extends AppCompatActivity {
 
     public void clearLists() {
         users.clear();
-        userNames.clear();
+        userDetails.clear();
         addresses.clear();
     }
+
+
 }

@@ -61,5 +61,6 @@
     <string name="begin_your_search">Begin your Search</string>
     <string name="proceed_to_next_step">Proceed to next step</string>
     <string name="switch_to_maps_view">Switch to maps view</string>
+    <string name="please_wait_while_your_data_gets_loaded">Please wait while your data gets loaded...</string>
 
 </resources>

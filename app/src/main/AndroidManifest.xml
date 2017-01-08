@@ -58,7 +58,14 @@
         </activity>
         <activity
             android:name=".Activities.DetailActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Details"
+            android:parentActivityName=".Activities.QuickSearchActivity"
+            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="smartSystems.com.bloodBank.Activities.QuickSearchActivity" />
+        </activity>
         <activity
             android:name=".Activities.UserActivity"
             android:configChanges="orientation|screenSize"
@@ -67,8 +74,7 @@
             android:name=".Activities.MapsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Maps view"
-            android:parentActivityName=".Activities.QuickSearchActivity"
-            android:theme="@style/AppTheme.Splash.AppBarOverlay">
+            android:parentActivityName=".Activities.QuickSearchActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="smartSystems.com.bloodBank.Activities.QuickSearchActivity" />
@@ -96,6 +102,7 @@
         </activity>
         <activity
             android:name=".Activities.SearchActivity"
+            android:configChanges="orientation|screenSize"
             android:label="Choose Search options"
             android:parentActivityName=".Activities.UserActivity"
             android:theme="@style/AppTheme.Splash.AppBarOverlay">
@@ -103,7 +110,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="smartSystems.com.bloodBank.Activities.UserActivity" />
         </activity>
-        <activity android:name=".Activities.AdvancedSearchActivity"></activity>
+        <activity
+            android:name=".Activities.AdvancedSearchActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".Activities.LoadingScreenActivity"></activity>
     </application>
 
 </manifest>
