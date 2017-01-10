@@ -21,7 +21,7 @@
     <string name="blood_prompt">Choose your blood type</string>
     <string name="phone_number">Phone Number:</string>
     <string name="address">Address:</string>
-    <string name="choose_blood">Choose your blood type</string>
+    <string name="choose_blood">Choose blood type</string>
 
     <string-array name="blood_type">
         <item>A+</item>
@@ -62,5 +62,8 @@
     <string name="proceed_to_next_step">Proceed to next step</string>
     <string name="switch_to_maps_view">Switch to maps view</string>
     <string name="please_wait_while_your_data_gets_loaded">Please wait while your data gets loaded...</string>
+    <string name="choose_maximum_distance">Choose maximum distance (Km) : </string>
+    <string name="use_current_location">I wish to use my current location</string>
+    <string name="send_email">Send Email</string>
 
 </resources>

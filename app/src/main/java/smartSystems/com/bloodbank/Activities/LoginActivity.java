@@ -1,5 +1,6 @@
 package smartSystems.com.bloodBank.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -26,10 +27,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private static final String ISLOGGED = "LOGGED";
     private final String TAG = "FB_SIGNIN";
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     private EditText etPass;
     private EditText etEmail;
     private Session session;
@@ -52,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d("Session", String.valueOf(session.loggedIn()));
 
         if (session.loggedIn()) {
-            startActivity(new Intent(LoginActivity.this, LoadingScreenActivity.class));
+            startActivity(new Intent(LoginActivity.this, UserActivity.class));
             finish();
         }
 
@@ -148,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     session.setLoggedIn(true);
                                     Toast.makeText(LoginActivity.this, "Signed in", Toast.LENGTH_SHORT)
                                             .show();
-                                    startActivity(new Intent(LoginActivity.this, LoadingScreenActivity.class));
+                                    startActivity(new Intent(LoginActivity.this, UserActivity.class));
                                     finish();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "Sign in failed", Toast.LENGTH_SHORT)

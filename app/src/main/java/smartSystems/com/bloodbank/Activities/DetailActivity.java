@@ -1,9 +1,11 @@
 package smartSystems.com.bloodBank.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,6 +34,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView tvAddress;
     private TextView tvPhone;
     private Button btnSendEmail;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +42,19 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        id = getIntent().getStringExtra(QuickSearchActivity.USER);
+        id = getIntent().getStringExtra("id");
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
 
         tvUsername = (TextView) findViewById(R.id.tvUsername);
         tvBloodType = (TextView) findViewById(R.id.tvBloodType);
         tvAddress = (TextView) findViewById(R.id.tvAddress);
         tvPhone = (TextView) findViewById(R.id.tvPhone);
         btnSendEmail = (Button) findViewById(R.id.btnSendEmail);
+
+        progressDialog.show();
 
         mDatabase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -60,6 +69,7 @@ public class DetailActivity extends AppCompatActivity {
                 tvUsername.setText(userName);
                 tvAddress.setText(address);
                 tvPhone.setText(phone);
+                progressDialog.dismiss();
             }
 
             @Override
@@ -71,13 +81,13 @@ public class DetailActivity extends AppCompatActivity {
         btnSendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String [] addresses = {userName};
+                String[] addresses = {userName};
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:"));
                 intent.putExtra(Intent.EXTRA_EMAIL, addresses);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Blood donation request");
                 intent.putExtra(Intent.EXTRA_TEXT, "I saw your profile on the blood bank application");
-                if(intent.resolveActivity(getPackageManager()) != null){
+                if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
 

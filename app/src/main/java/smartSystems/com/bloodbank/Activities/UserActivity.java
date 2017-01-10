@@ -1,5 +1,6 @@
 package smartSystems.com.bloodBank.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,7 +41,8 @@ public class UserActivity extends AppCompatActivity
     private TextView etGender;
     private TextView etBloodType;
     private TextView etDonor;
-    private Button btnListUsers;
+    private Button btnDefaultSearch;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,18 +75,25 @@ public class UserActivity extends AppCompatActivity
             logout();
         }
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+
         etUser = (TextView) findViewById(R.id.etUser);
         etAddr = (TextView) findViewById(R.id.etAddr);
         etPhoneNum = (TextView) findViewById(R.id.etPhoneNum);
         etGender = (TextView) findViewById(R.id.etGender);
         etBloodType = (TextView) findViewById(R.id.etBloodType);
         etDonor = (TextView) findViewById(R.id.etIsDonor);
-        btnListUsers = (Button) findViewById(R.id.btnListUsers);
+        btnDefaultSearch = (Button) findViewById(R.id.btnDefaultSearch);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
+
+            progressDialog.show();
             mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChildren()) {
@@ -96,8 +105,8 @@ public class UserActivity extends AppCompatActivity
                         etGender.setText(values.get("gender"));
                         etBloodType.setText(values.get("bloodType"));
                         etDonor.setText(values.get("donor"));
-
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -108,10 +117,10 @@ public class UserActivity extends AppCompatActivity
             });
         }
 
-        btnListUsers.setOnClickListener(new View.OnClickListener() {
+        btnDefaultSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserActivity.this, SearchActivity.class));
+                startActivity(new Intent(UserActivity.this, DefaultMapsActivity.class));
             }
         });
 
@@ -133,6 +142,28 @@ public class UserActivity extends AppCompatActivity
             moveTaskToBack(true);
             //startActivity(new Intent(UserActivity.this, MainActivity.class));
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("userName", etUser.getText().toString());
+        outState.putString("userAddress", etAddr.getText().toString());
+        outState.putString("userPhone", etPhoneNum.getText().toString());
+        outState.putString("userGender", etGender.getText().toString());
+        outState.putString("userBloodType", etBloodType.getText().toString());
+        outState.putString("userDonor", etDonor.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        etUser.setText(savedInstanceState.getString("userName"));
+        etAddr.setText(savedInstanceState.getString("userAddress"));
+        etPhoneNum.setText(savedInstanceState.getString("userPhone"));
+        etGender.setText(savedInstanceState.getString("userGender"));
+        etBloodType.setText(savedInstanceState.getString("userBloodType"));
+        etDonor.setText(savedInstanceState.getString("userDonor"));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -160,4 +191,5 @@ public class UserActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

@@ -11,7 +11,7 @@ import smartSystems.com.bloodBank.R;
 
 public class LoadingScreenActivity extends AppCompatActivity {
     //Introduce an delay
-    private final int WAIT_TIME = 3000;
+    private final int WAIT_TIME = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

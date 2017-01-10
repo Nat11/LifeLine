@@ -57,7 +57,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private RadioGroup etRadioGroup;
     private RadioButton etGender;
     private Spinner etBloodType;
-    private Button etCreate;
     private Session session;
     final String[] bloodType = new String[1];
     private CheckBox etDonor;
@@ -84,7 +83,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 .AutoCompleteAddress);
         etPhone = (EditText) findViewById(R.id.Phone);
         etRadioGroup = (RadioGroup) findViewById(R.id.Gender);
-        etCreate = (Button) findViewById(R.id.btnRegister);
         etBloodType = (Spinner) findViewById(R.id.BloodType);
         etDonor = (CheckBox) findViewById(R.id.Donor);
 
@@ -192,18 +190,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             donor = "Yes";
         } else donor = "No";
 
-        /*Geocoder geocoder = new Geocoder(this);
-        List<Address> addressList = null;
-
-        try {
-            addressList = geocoder.getFromLocationName(address, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Address location = addressList.get(0);
-        Toast.makeText(this, "Lat " + location.getLatitude() + " Long " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-*/
-
         // Create the user account
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this,
@@ -215,10 +201,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                     // .show();
                                     session.setLoggedIn(true);
                                     FirebaseUser FbUser = task.getResult().getUser();
-                                    User user = new User(email, password, address, phone, (String) etGender.getText(), bloodType[0], donor);
+                                    User user = new User(email, address, phone, (String) etGender.getText(), bloodType[0], donor);
                                     mDatabase.child("users").child(FbUser.getUid()).setValue(user);
                                     Toast.makeText(SignUpActivity.this, "Account created", Toast.LENGTH_LONG);
-                                    startActivity(new Intent(SignUpActivity.this, LoadingScreenActivity.class));
+                                    startActivity(new Intent(SignUpActivity.this, UserActivity.class));
                                     finish();
 
                                 } else {

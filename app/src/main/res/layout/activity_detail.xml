@@ -16,7 +16,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Blood Type"
         android:textSize="25sp" />
 
     <TextView
@@ -25,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvBloodType"
         android:gravity="center_horizontal"
-        android:text="Username"
         android:textSize="20sp" />
 
 
@@ -37,7 +35,7 @@
         android:layout_below="@+id/tvBloodType"
         android:layout_marginStart="10dp"
         android:layout_marginTop="54dp"
-        android:text="TextView" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tvPhone"
@@ -46,14 +44,17 @@
         android:layout_alignLeft="@id/tvAddress"
         android:layout_below="@+id/tvAddress"
         android:layout_marginTop="18dp"
-        android:text="TextView" />
+        android:textSize="15sp" />
 
     <Button
         android:id="@+id/btnSendEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:text="Send Email to donor" />
+        android:layout_below="@+id/tvPhone"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/red_button_bg"
+        android:text="@string/send_email"
+        android:textColor="@color/white" />
 
 </RelativeLayout>
