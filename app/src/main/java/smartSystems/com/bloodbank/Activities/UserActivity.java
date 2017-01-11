@@ -172,15 +172,7 @@ public class UserActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_import) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_update) {
+        if (id == R.id.nav_update) {
             startActivity(new Intent(UserActivity.this, UpdateInfoActivity.class));
 
         } else if (id == R.id.nav_logout) {
