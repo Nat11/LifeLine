@@ -304,4 +304,9 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
         return val;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(DefaultMapsActivity.this, UserActivity.class));
+    }
 }
