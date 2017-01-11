@@ -101,7 +101,6 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
         users.clear();
         userNames.clear();
 
-        progressDialog.show();
         if (current != null) {
             mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -159,7 +158,6 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                                 }
                                 matchedUsers = new ArrayList<User>(users.values());
                                 ids = new ArrayList<String>(users.keySet());
-                                progressDialog.dismiss();
                             }
 
                             @Override
@@ -176,6 +174,7 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                 }
             });
 
+            progressDialog.show();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -192,6 +191,7 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                     });
                 }
             }).start();
+            progressDialog.dismiss();
 
         } else {
             Toast.makeText(this, "Current user was not retrieved", Toast.LENGTH_SHORT).show();
