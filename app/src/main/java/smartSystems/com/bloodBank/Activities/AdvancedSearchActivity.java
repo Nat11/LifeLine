@@ -81,4 +81,11 @@ public class AdvancedSearchActivity extends AppCompatActivity implements View.On
         intent.putExtra("blood", blood);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(AdvancedSearchActivity.this, DefaultMapsActivity.class));
+
+    }
 }

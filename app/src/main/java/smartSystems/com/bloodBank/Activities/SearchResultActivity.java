@@ -307,5 +307,9 @@ public class SearchResultActivity extends AppCompatActivity {
         addresses.clear();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
+    }
 }
