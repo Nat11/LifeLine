@@ -1,5 +1,6 @@
 package smartSystems.com.bloodBank.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
     private static FirebaseAuth mAuth;
     private Session session;
     private Button btnUpdate;
+    private ProgressDialog progressDialog;
     private EditText etNewAddress, etNewPhone;
     private CheckBox newDonor;
     private static String newAddress, newPhone, newIsDonor;
@@ -66,10 +68,16 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
         }
         user = mAuth.getInstance().getCurrentUser();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+
         mAutocompleteAddress = (AutoCompleteTextView) findViewById(R.id.etNewAddress);
         etNewPhone = (EditText) findViewById(R.id.etNewPhone);
         newDonor = (CheckBox) findViewById(R.id.newDonor);
         btnUpdate = (Button) findViewById(R.id.btnUpdateInfo);
+
+        progressDialog.show();
 
         mDatabase.child("users").child(user.getUid()).child("donor").
                 addListenerForSingleValueEvent(new ValueEventListener() {
@@ -85,6 +93,7 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
                         }
 
                         Log.i(TAG, String.valueOf(isDonor));
+                        progressDialog.dismiss();
                     }
 
                     @Override

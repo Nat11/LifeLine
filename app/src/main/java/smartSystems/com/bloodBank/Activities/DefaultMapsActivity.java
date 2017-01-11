@@ -97,9 +97,12 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
         mDatabase = FirebaseDatabase.getInstance().getReference();
         final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
 
+        progressDialog.show();
+
         addresses.clear();
         users.clear();
         userNames.clear();
+
 
         if (current != null) {
             mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -174,7 +177,6 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                 }
             });
 
-            progressDialog.show();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -187,11 +189,11 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                         @Override
                         public void run() {
                             setUpMapIfNeeded();
+                            progressDialog.dismiss();
                         }
                     });
                 }
             }).start();
-            progressDialog.dismiss();
 
         } else {
             Toast.makeText(this, "Current user was not retrieved", Toast.LENGTH_SHORT).show();
