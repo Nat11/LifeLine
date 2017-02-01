@@ -2,6 +2,7 @@ package smartSystems.com.bloodBank.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +35,7 @@ public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference mDatabase;
+    private static FirebaseUser currentUser;
     private Session session;
     private TextView etUser;
     private TextView NavUser;
@@ -43,6 +46,7 @@ public class UserActivity extends AppCompatActivity
     private TextView etDonor;
     private Button btnDefaultSearch;
     private ProgressDialog progressDialog;
+    private static String username, address, phone, gender, bloodType, isDonor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,44 +90,48 @@ public class UserActivity extends AppCompatActivity
         etBloodType = (TextView) findViewById(R.id.etBloodType);
         etDonor = (TextView) findViewById(R.id.etIsDonor);
         btnDefaultSearch = (Button) findViewById(R.id.btnDefaultSearch);
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-
-            progressDialog.show();
-            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChildren()) {
-                        Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
-                        etUser.setText(values.get("username"));
-                        NavUser.setText(values.get("username"));
-                        etAddr.setText(values.get("address"));
-                        etPhoneNum.setText(values.get("phone"));
-                        etGender.setText(values.get("gender"));
-                        etBloodType.setText(values.get("bloodType"));
-                        etDonor.setText(values.get("donor"));
-                    }
-                    progressDialog.dismiss();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
-
-                }
-            });
-        }
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        loadData();
 
         btnDefaultSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserActivity.this, DefaultMapsActivity.class));
+                startActivity(new Intent(UserActivity.this, LoadScreenActivity.class));
             }
         });
+    }
 
+    public void loadData() {
+        progressDialog.show();
+        mDatabase.child("users").child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
+                    username = values.get("username");
+                    address = values.get("address");
+                    phone = values.get("phone");
+                    gender = values.get("gender");
+                    bloodType = values.get("bloodType");
+                    isDonor = values.get("donor");
+                }
+                NavUser.setText(username);
+                etUser.setText(username);
+                etAddr.setText(address);
+                etGender.setText(gender);
+                etPhoneNum.setText(phone);
+                etBloodType.setText(bloodType);
+                etDonor.setText(isDonor);
+                progressDialog.dismiss();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void logout() {

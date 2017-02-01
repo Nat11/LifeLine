@@ -50,7 +50,7 @@
             android:name=".Activities.DetailActivity"
             android:configChanges="orientation|screenSize"
             android:label="Details"
-            android:theme="@style/AppTheme.Splash.AppBarOverlay"></activity>
+            android:theme="@style/AppTheme.Splash.AppBarOverlay" />
         <activity
             android:name=".Activities.UserActivity"
             android:configChanges="orientation|screenSize"
@@ -59,9 +59,7 @@
             android:name=".Activities.MapsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Maps view"
-            android:theme="@style/AppTheme.Splash.AppBarOverlay">
-
-        </activity>
+            android:theme="@style/AppTheme.Splash.AppBarOverlay" />
         <activity
             android:name=".Activities.UpdateInfoActivity"
             android:configChanges="orientation|screenSize"
@@ -92,7 +90,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="smartSystems.com.bloodBank.Activities.DefaultMapsActivity" />
         </activity>
-        <activity android:name=".Activities.LoadingScreenActivity" />
         <activity
             android:name=".Activities.SearchResultActivity"
             android:configChanges="orientation|screenSize"
@@ -113,6 +110,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="smartSystems.com.bloodBank.Activities.UserActivity" />
         </activity>
+        <activity android:name=".Activities.SearchTestActivity" />
+        <activity android:name=".Activities.LoadScreenActivity"></activity>
     </application>
 
 </manifest>

@@ -65,5 +65,6 @@
     <string name="choose_maximum_distance">Choose maximum distance (Km) : </string>
     <string name="use_current_location">I wish to use my current location</string>
     <string name="send_email">Send Email</string>
+    <string name="pref_previously_started">previously_started</string>
 
 </resources>

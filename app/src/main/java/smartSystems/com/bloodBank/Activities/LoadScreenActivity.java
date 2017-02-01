@@ -1,20 +1,15 @@
 package smartSystems.com.bloodBank.Activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.Parcelable;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -50,48 +45,25 @@ import java.util.Map;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class LoadScreenActivity extends AppCompatActivity {
 
-    private String searchedBloodType;
-    private int searchedDistance;
+    private ProgressDialog progressDialog;
     private DatabaseReference mDatabase;
-    private static String currentDonor, bloodType;
+    private static String currentDonor;
     private static String isDonor;
     private static String currentAddress;
     private static String address;
     private static LatLng currentLatLng;
-    private static List<String> userNameBloodList = new ArrayList<>();
     private static List<User> usersList = new ArrayList<>();
-    static Map<String, String> users = new HashMap<>();
-    ArrayAdapter<String> adapter;
-    private static List<LatLng> addresses = new ArrayList<>();
-    private static List<String> ids = new ArrayList<>();
-    private Button btnSwitchToMaps;
-    Parcelable state;
-    private static String userName;
-    private ListView lv;
-    private static Map<String, String> keysUserNames = new HashMap<>();
-    private ProgressDialog progressDialog;
+    private static Map<String, String> keyUsernames = new HashMap<>();
+    private static Map<String, String> users = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-
-        setContentView(R.layout.activity_search_result);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        searchedBloodType = getIntent().getStringExtra("blood");
-        searchedDistance = getIntent().getIntExtra("distance", 0);
-
-        btnSwitchToMaps = (Button) findViewById(R.id.btnSwitchToMaps);
-
+        setContentView(R.layout.activity_load_screen);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        lv = (ListView) findViewById(R.id.listViewResult);
-        clearLists();
+        new LoadViewTask().execute();
         loadData();
     }
 
@@ -100,76 +72,37 @@ public class SearchResultActivity extends AppCompatActivity {
         mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                clearLists();
 
                 if (dataSnapshot.hasChildren()) {
                     Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
                     currentDonor = values.get("donor");
                     currentAddress = values.get("address");//Get address of current user
                     currentLatLng = getLatLng(currentAddress); //Convert address to Latitude Longitude
+                    if (currentDonor.equals("Yes"))
+                        isDonor = "No";
+                    else
+                        isDonor = "Yes";
+
                 }
-
-                if (currentDonor.equals("Yes"))
-                    isDonor = "No";
-                else
-                    isDonor = "Yes";
-
                 mDatabase.child("users").orderByChild("donor").equalTo(isDonor).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             User user = snapshot.getValue(User.class);
-                            userName = user.getUsername();
                             address = user.getAddress();
-                            bloodType = user.getBloodType();
                             double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
-                            if (bloodType.equals(searchedBloodType) && distance / 1000 < searchedDistance) { //divise by 1000 to get distance in Kilometers
-                                users.put(snapshot.getKey(), user.getBloodType() + " : " + user.getUsername()); //display searchedBloodType and username in ListView
-                                addresses.add(getLatLng(address));
-                                keysUserNames.put(snapshot.getKey(), userName);
+                            if (distance / 1000 < 150) { //divise by 1000 to get distance in Kilometers
+                                users.put(snapshot.getKey(), user.isDonor() + " : " + user.getUsername()); //display searchedBloodType and username in ListView
+                                keyUsernames.put(snapshot.getKey(), user.getUsername());
                                 usersList.add(user);
                             }
                         }
-                        if (users.size() == 0) {
-                            Toast.makeText(SearchResultActivity.this, "Invalid search criteria, please change your choices", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
-
-                        } else {
-                            userNameBloodList = new ArrayList<String>(users.values());
-
-                            Collections.sort(userNameBloodList);//Sort userNameBloodList by values
-                            adapter = new ArrayAdapter<>(
-                                    SearchResultActivity.this,
-                                    android.R.layout.simple_list_item_1,
-                                    userNameBloodList);
-
-                            ids = new ArrayList<String>(users.keySet());
-                            lv.setAdapter(adapter);
-                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Intent intent = new Intent(SearchResultActivity.this, DetailActivity.class);
-                                    String id = ids.get(i);
-                                    intent.putExtra("id", id);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            btnSwitchToMaps.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    goToMaps(addresses, usersList, keysUserNames);
-                                }
-                            });
-
-                        }
-                        progressDialog.dismiss();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
             }
@@ -179,17 +112,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        state = lv.onSaveInstanceState();
-        super.onPause();
-    }
-
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
     }
 
     public LatLng getLatLng(String address) {
@@ -239,23 +161,71 @@ public class SearchResultActivity extends AppCompatActivity {
         return new LatLng(lat, lng);
     }
 
-    public void goToMaps(List<LatLng> addresses, List<User> usersList, Map<String, String> keysUserNames) {
-        Intent intent = new Intent(SearchResultActivity.this, MapsActivity.class);
-        intent.putExtra("ADDRESSES", (Serializable) addresses);
-        intent.putExtra("KEYSUSERNAMES", (Serializable) keysUserNames);
-        intent.putExtra("USERS", (Serializable) usersList);
-        startActivity(intent);
-    }
+    private class LoadViewTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPreExecute() {
+            //Create a new progress dialog
+            progressDialog = new ProgressDialog(LoadScreenActivity.this);
+            //Set the progress dialog to display a horizontal progress bar
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            //Set the dialog title to 'Loading...'
+            progressDialog.setTitle("Loading...");
+            //Set the dialog message to 'Loading application View, please wait...'
+            progressDialog.setMessage("Loading your data, please wait...");
+            //This dialog can't be canceled by pressing the back key
+            progressDialog.setCancelable(false);
+            //This dialog isn't indeterminate
+            progressDialog.setIndeterminate(false);
+            //The maximum number of items is 100
+            progressDialog.setMax(100);
+            //Set the current progress to zero
+            progressDialog.setProgress(0);
+            //Display the progress dialog
+            progressDialog.show();
+        }
 
-    public void clearLists() {
-        users.clear();
-        userNameBloodList.clear();
-        addresses.clear();
-    }
+        //The code to be executed in a background thread.
+        @Override
+        protected Void doInBackground(Void... params) {
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
+            try {
+                //Get the current thread's token
+                synchronized (this) {
+                    //Initialize an integer (that will act as a counter) to zero
+                    int counter = 0;
+                    //While the counter is smaller than four
+                    while (counter <= 4) {
+                        //Wait 850 milliseconds
+                        this.wait(250);
+                        //Increment the counter
+                        counter++;
+                        //Set the current progress.
+                        //This value is going to be passed to the onProgressUpdate() method.
+                        publishProgress(counter * 25);
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        //Update the progress
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            progressDialog.setProgress(values[0]);
+        }
+
+        //after executing the code in the thread
+        @Override
+        protected void onPostExecute(Void result) {
+            //close the progress dialog
+            progressDialog.dismiss();
+            Intent intent = new Intent(LoadScreenActivity.this, DefaultMapsActivity.class);
+            intent.putExtra("USERS", (Serializable) usersList);
+            intent.putExtra("KEYUSERNAMES", (Serializable) keyUsernames);
+            startActivity(intent);
+        }
     }
 }

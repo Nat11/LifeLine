@@ -3,8 +3,6 @@ package smartSystems.com.bloodBank.Activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -50,15 +48,14 @@ import java.util.Map;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class SearchTestActivity extends AppCompatActivity {
 
-    private String searchedBloodType;
-    private int searchedDistance;
     private DatabaseReference mDatabase;
-    private static String currentDonor, bloodType;
+    private static String currentDonor;
     private static String isDonor;
     private static String currentAddress;
     private static String address;
+    private static String bloodType;
     private static LatLng currentLatLng;
     private static List<String> userNameBloodList = new ArrayList<>();
     private static List<User> usersList = new ArrayList<>();
@@ -66,54 +63,35 @@ public class SearchResultActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     private static List<LatLng> addresses = new ArrayList<>();
     private static List<String> ids = new ArrayList<>();
-    private Button btnSwitchToMaps;
-    Parcelable state;
     private static String userName;
     private ListView lv;
     private static Map<String, String> keysUserNames = new HashMap<>();
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-
-        setContentView(R.layout.activity_search_result);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        searchedBloodType = getIntent().getStringExtra("blood");
-        searchedDistance = getIntent().getIntExtra("distance", 0);
-
-        btnSwitchToMaps = (Button) findViewById(R.id.btnSwitchToMaps);
+        setContentView(R.layout.activity_search_test);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        lv = (ListView) findViewById(R.id.listViewResult);
-        clearLists();
-        loadData();
-    }
-
-    public void loadData() {
+        lv = (ListView) findViewById(R.id.listViewResultTest);
         final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+
         mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                clearLists();
 
                 if (dataSnapshot.hasChildren()) {
                     Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
                     currentDonor = values.get("donor");
                     currentAddress = values.get("address");//Get address of current user
                     currentLatLng = getLatLng(currentAddress); //Convert address to Latitude Longitude
+                    if (currentDonor.equals("Yes"))
+                        isDonor = "No";
+                    else
+                        isDonor = "Yes";
+
                 }
-
-                if (currentDonor.equals("Yes"))
-                    isDonor = "No";
-                else
-                    isDonor = "Yes";
-
+                Toast.makeText(SearchTestActivity.this, "isdonor: " + isDonor, Toast.LENGTH_SHORT).show();
                 mDatabase.child("users").orderByChild("donor").equalTo(isDonor).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -124,52 +102,40 @@ public class SearchResultActivity extends AppCompatActivity {
                             address = user.getAddress();
                             bloodType = user.getBloodType();
                             double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
-                            if (bloodType.equals(searchedBloodType) && distance / 1000 < searchedDistance) { //divise by 1000 to get distance in Kilometers
-                                users.put(snapshot.getKey(), user.getBloodType() + " : " + user.getUsername()); //display searchedBloodType and username in ListView
+                            if (distance / 1000 < 150) { //divise by 1000 to get distance in Kilometers
+                                users.put(snapshot.getKey(), user.isDonor() + " : " + user.getUsername()); //display searchedBloodType and username in ListView
                                 addresses.add(getLatLng(address));
                                 keysUserNames.put(snapshot.getKey(), userName);
                                 usersList.add(user);
                             }
                         }
-                        if (users.size() == 0) {
-                            Toast.makeText(SearchResultActivity.this, "Invalid search criteria, please change your choices", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
 
-                        } else {
-                            userNameBloodList = new ArrayList<String>(users.values());
+                        userNameBloodList = new ArrayList<String>(users.values());
+                        Toast.makeText(SearchTestActivity.this, "size" + userNameBloodList.size(), Toast.LENGTH_SHORT).show();
+                        Collections.sort(userNameBloodList);//Sort userNameBloodList by values
+                        adapter = new ArrayAdapter<>(
+                                SearchTestActivity.this,
+                                android.R.layout.simple_list_item_1,
+                                userNameBloodList);
 
-                            Collections.sort(userNameBloodList);//Sort userNameBloodList by values
-                            adapter = new ArrayAdapter<>(
-                                    SearchResultActivity.this,
-                                    android.R.layout.simple_list_item_1,
-                                    userNameBloodList);
+                        ids = new ArrayList<String>(users.keySet());
+                        lv.setAdapter(adapter);
+                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                            ids = new ArrayList<String>(users.keySet());
-                            lv.setAdapter(adapter);
-                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                Intent intent = new Intent(SearchTestActivity.this, DetailActivity.class);
+                                String id = ids.get(i);
+                                intent.putExtra("id", id);
+                                startActivity(intent);
+                            }
+                        });
 
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Intent intent = new Intent(SearchResultActivity.this, DetailActivity.class);
-                                    String id = ids.get(i);
-                                    intent.putExtra("id", id);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            btnSwitchToMaps.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    goToMaps(addresses, usersList, keysUserNames);
-                                }
-                            });
-
-                        }
-                        progressDialog.dismiss();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
             }
@@ -179,12 +145,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        state = lv.onSaveInstanceState();
-        super.onPause();
     }
 
     @Override
@@ -239,23 +199,4 @@ public class SearchResultActivity extends AppCompatActivity {
         return new LatLng(lat, lng);
     }
 
-    public void goToMaps(List<LatLng> addresses, List<User> usersList, Map<String, String> keysUserNames) {
-        Intent intent = new Intent(SearchResultActivity.this, MapsActivity.class);
-        intent.putExtra("ADDRESSES", (Serializable) addresses);
-        intent.putExtra("KEYSUSERNAMES", (Serializable) keysUserNames);
-        intent.putExtra("USERS", (Serializable) usersList);
-        startActivity(intent);
-    }
-
-    public void clearLists() {
-        users.clear();
-        userNameBloodList.clear();
-        addresses.clear();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
-    }
 }

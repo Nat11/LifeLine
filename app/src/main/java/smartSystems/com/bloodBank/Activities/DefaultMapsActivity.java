@@ -2,9 +2,11 @@ package smartSystems.com.bloodBank.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -43,37 +45,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import smartSystems.com.bloodBank.Model.ObjectSerializer;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
+
+import static android.R.attr.key;
 
 public class DefaultMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private static List<LatLng> addresses = new ArrayList<>();
-    private static LatLng currentLatLng;
-    private DatabaseReference mDatabase;
-    private static String donor;
-    private static String currentAddress;
-    private static String address;
-    private static String userName;
-    static Map<String, User> users = new HashMap<>();
-    private static List<String> ids = new ArrayList<>();
     private static List<User> matchedUsers = new ArrayList<>();
-    private static Map<String, String> userNames = new HashMap<>();
-    private final double maxDistance = 150.0;
-    private ProgressDialog progressDialog;
+    private static Map<String, String> keyUserNames = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,115 +89,27 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
             }
         });
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
+        matchedUsers = (List<User>) getIntent().getSerializableExtra("USERS");
+        keyUserNames = (Map<String, String>) getIntent().getSerializableExtra("KEYUSERNAMES");
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+        if (null == matchedUsers || null == keyUserNames) {
+            matchedUsers = new ArrayList<User>();
+            keyUserNames = new HashMap<String, String>();
 
-        progressDialog.show();
+            // load data from preference
+            SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
 
-        addresses.clear();
-        users.clear();
-        userNames.clear();
-
-
-        if (current != null) {
-            mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChildren()) {
-                        Map<String, String> values = (Map<String, String>) dataSnapshot.getValue();
-                        donor = values.get("donor");
-                        currentAddress = values.get("address");//Get address of current user
-                        currentLatLng = getLatLng(currentAddress); //Convert address to Latitude Longitude
-                    }
-
-                    if (donor.equals("Yes")) {
-                        mDatabase.child("users").orderByChild("donor").equalTo("No").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    User user = snapshot.getValue(User.class);
-                                    userName = user.getUsername();
-                                    address = user.getAddress();
-                                    double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
-                                    if (distance / 1000 < maxDistance) { //divise by 1000 to get distance in Kilometers
-                                        users.put(snapshot.getKey(), user);
-                                        userNames.put(snapshot.getKey(), userName);
-                                        addresses.add(getLatLng(address));
-                                    }
-                                }
-                                matchedUsers = new ArrayList<User>(users.values());
-                                ids = new ArrayList<String>(users.keySet());
-                                progressDialog.dismiss();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-
-                    if (donor.equals("No")) {
-                        mDatabase.child("users").orderByChild("donor").equalTo("Yes").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    User user = snapshot.getValue(User.class);
-                                    address = user.getAddress();
-                                    userName = user.getUsername();
-                                    double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
-                                    if (distance / 1000 < maxDistance) {//divise by 1000 to get distance in Kilometers
-                                        users.put(snapshot.getKey(), user);
-                                        userNames.put(snapshot.getKey(), userName);
-                                        addresses.add(getLatLng(address));
-                                    }
-                                }
-                                matchedUsers = new ArrayList<User>(users.values());
-                                ids = new ArrayList<String>(users.keySet());
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
-                }
-            });
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setUpMapIfNeeded();
-                            progressDialog.dismiss();
-                        }
-                    });
-                }
-            }).start();
-
-        } else {
-            Toast.makeText(this, "Current user was not retrieved", Toast.LENGTH_SHORT).show();
-            return;
+            try {
+                matchedUsers = (ArrayList<User>) ObjectSerializer.deserialize(prefs.getString("matchedUsers", ObjectSerializer.serialize(new ArrayList<User>())));
+                keyUserNames = (HashMap<String, String>) ObjectSerializer.deserialize(prefs.getString("keyUsernames", ObjectSerializer.serialize(new HashMap<String, String>())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
+        setUpMapIfNeeded();
     }
 
     private void setUpMapIfNeeded() {
@@ -214,9 +125,7 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         LatLng Paris = new LatLng(48.866667, 2.333333);
-
         for (int i = 0; i < matchedUsers.size(); i++) {
-
             mMap.addMarker(new MarkerOptions().position(getLatLng(matchedUsers.get(i).getAddress())).
                     title(matchedUsers.get(i).getUsername()).
                     snippet(matchedUsers.get(i).getBloodType()));
@@ -224,19 +133,55 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Paris, 5));
 
-
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(DefaultMapsActivity.this, DetailActivity.class);
                 String userName = marker.getTitle();
-                String clickedMarkerUserId = getKeysFromValue(userNames, userName); //get User Id from database
+                String clickedMarkerUserId = getKeysFromValue(keyUserNames, userName); //get User Id from database
                 String result = clickedMarkerUserId.substring(1, clickedMarkerUserId.length() - 1);
-                Log.d("clickedUser", result);
                 intent.putExtra("id", result);
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // save the task list to preference
+        SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        try {
+            editor.putString("matchedUsers", ObjectSerializer.serialize((Serializable) matchedUsers));
+            editor.putString("keyUsernames", ObjectSerializer.serialize((Serializable) keyUserNames));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        editor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (null == matchedUsers || null == keyUserNames) {
+            matchedUsers = new ArrayList<User>();
+            keyUserNames = new HashMap<String, String>();
+            // load tasks from preference
+            SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
+
+            try {
+                matchedUsers = (ArrayList<User>) ObjectSerializer.deserialize(prefs.getString("matchedUsers", ObjectSerializer.serialize(new ArrayList<User>())));
+                keyUserNames = (HashMap<String, String>) ObjectSerializer.deserialize(prefs.getString("keyUsernames", ObjectSerializer.serialize(new HashMap<String, String>())));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        setUpMapIfNeeded();
     }
 
     public LatLng getLatLng(String address) {
@@ -311,4 +256,5 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
         super.onBackPressed();
         startActivity(new Intent(DefaultMapsActivity.this, UserActivity.class));
     }
+
 }

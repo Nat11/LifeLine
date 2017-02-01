@@ -78,30 +78,7 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
         btnUpdate = (Button) findViewById(R.id.btnUpdateInfo);
 
         progressDialog.show();
-
-        mDatabase.child("users").child(user.getUid()).child("donor").
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        newIsDonor = (String) dataSnapshot.getValue();
-                        if (newIsDonor.equals("Yes")) {
-                            isDonor = true;
-                            newDonor.setText(R.string.DonorStatus);
-                        } else {
-                            isDonor = false;
-                            newDonor.setText(R.string.NonDonorStatus);
-                        }
-
-                        Log.i(TAG, String.valueOf(isDonor));
-                        progressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
+        loadData();
         mGoogleApiClient = new GoogleApiClient.Builder(UpdateInfoActivity.this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
@@ -145,6 +122,29 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
 
     }
 
+    public void loadData() {
+        mDatabase.child("users").child(user.getUid()).child("donor").
+                addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        newIsDonor = (String) dataSnapshot.getValue();
+                        if (newIsDonor.equals("Yes")) {
+                            isDonor = true;
+                            newDonor.setText(R.string.DonorStatus);
+                        } else {
+                            isDonor = false;
+                            newDonor.setText(R.string.NonDonorStatus);
+                        }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -177,25 +177,7 @@ public class UpdateInfoActivity extends AppCompatActivity implements GoogleApiCl
     @Override
     protected void onResume() {
         super.onResume();
-
-        mDatabase.child("users").child(user.getUid()).child("donor").
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        newIsDonor = (String) dataSnapshot.getValue();
-                        if (newIsDonor.equals("Yes")) {
-                            isDonor = true;
-                            newDonor.setText(R.string.DonorStatus);
-                        } else {
-                            newDonor.setText(R.string.NonDonorStatus);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+        loadData();
     }
 
     private static void update(String child, String value) {
