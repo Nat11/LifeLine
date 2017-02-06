@@ -1,13 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    configurations.all {
+        resolutionStrategy {
+            force 'com.android.support:support-annotations:25.0.0'
+        }
+    }
+
     useLibrary 'org.apache.http.legacy'
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "smartSystems.com.bloodBank"
-        minSdkVersion 21
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -19,6 +26,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Always show the result of every unit test, even if it passes.
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+        }
+    }
 }
 
 dependencies {
@@ -26,6 +40,18 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestCompile 'com.android.support.test:runner:0.5'
+
+    androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+    }
 
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.google.firebase:firebase-config:10.0.0'
@@ -36,6 +62,13 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4+'
     compile 'com.jakewharton:butterknife:6.0.0'
     testCompile 'junit:junit:4.12'
+
+    // Dependencies for local unit tests
+    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
+    testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

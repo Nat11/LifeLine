@@ -81,7 +81,7 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_default_maps);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSearch);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
