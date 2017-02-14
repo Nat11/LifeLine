@@ -3,6 +3,9 @@ package smartSystems.com.bloodBank.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.core.deps.guava.annotations.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+import smartSystems.com.bloodBank.IdlingResource.SimpleIdlingResource;
 import smartSystems.com.bloodBank.R;
 import smartSystems.com.bloodBank.Session.Session;
 
@@ -33,6 +37,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText etEmail;
     private Session session;
     private Button btnLogin, btnRegister, btnReset;
+    // The Idling Resource which will be null in production.
+
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +184,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth.signOut();
         Toast.makeText(LoginActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+    }
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource(this);
+        }
+        return mIdlingResource;
     }
 
 }

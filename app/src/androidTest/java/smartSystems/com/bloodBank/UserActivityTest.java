@@ -4,14 +4,22 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
+import android.view.Gravity;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
 import smartSystems.com.bloodBank.Activities.UserActivity;
+import smartSystems.com.bloodBank.Session.Session;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.DrawerMatchers.isOpen;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -25,6 +33,11 @@ public class UserActivityTest {
     public void clickOnUpdateNavigationItem_ShowsUpdateScreen() {
         // Open Drawer to click on navigation.
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+        // Check if drawer is open
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isOpen(Gravity.LEFT))); // Left drawer is open.
+
+        //click on update nav item
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_update));
 
         // Check that update Activity was opened.
@@ -37,6 +50,11 @@ public class UserActivityTest {
     public void clickOnLogoutNavigationItem_ShowsLoginScreen() {
         // Open Drawer to click on navigation.
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+
+        // Check if drawer is open
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isOpen(Gravity.LEFT))); // Left drawer is open.
+
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
 
         // Check that Login Activity was opened.

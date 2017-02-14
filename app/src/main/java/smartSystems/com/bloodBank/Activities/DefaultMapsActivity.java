@@ -1,25 +1,14 @@
 package smartSystems.com.bloodBank.Activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,14 +16,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.maps.android.MarkerManager;
-import com.google.maps.android.SphericalUtil;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -45,18 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,14 +40,15 @@ import java.util.Set;
 import smartSystems.com.bloodBank.Model.ObjectSerializer;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
+import smartSystems.com.bloodBank.users.usersContract;
+import smartSystems.com.bloodBank.users.usersPresenter;
 
-import static android.R.attr.key;
-
-public class DefaultMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class DefaultMapsActivity extends AppCompatActivity implements OnMapReadyCallback, usersContract.View {
 
     private GoogleMap mMap;
     private static List<User> matchedUsers = new ArrayList<>();
     private static Map<String, String> keyUserNames = new HashMap<>();
+    private usersContract.UserActionsListener mUserActionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +64,8 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                 startActivity(new Intent(DefaultMapsActivity.this, AdvancedSearchActivity.class));
             }
         });
+
+        mUserActionListener = new usersPresenter(this);
 
         matchedUsers = (List<User>) getIntent().getSerializableExtra("USERS");
         keyUserNames = (Map<String, String>) getIntent().getSerializableExtra("KEYUSERNAMES");
@@ -109,10 +87,10 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
             }
         }
 
-        setUpMapIfNeeded();
+        setUpMap();
     }
 
-    private void setUpMapIfNeeded() {
+    public void setUpMap() {
         if (mMap == null) {
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -130,9 +108,12 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                     title(matchedUsers.get(i).getUsername()).
                     snippet(matchedUsers.get(i).getBloodType()));
         }
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Paris, 5));
+        mUserActionListener.openUserDetails();
+    }
 
+    @Override
+    public void showUserMarkerDetail() {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -181,7 +162,7 @@ public class DefaultMapsActivity extends AppCompatActivity implements OnMapReady
                 e.printStackTrace();
             }
         }
-        setUpMapIfNeeded();
+        setUpMap();
     }
 
     public LatLng getLatLng(String address) {

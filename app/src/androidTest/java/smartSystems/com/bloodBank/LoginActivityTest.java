@@ -1,12 +1,18 @@
 package smartSystems.com.bloodBank;
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import smartSystems.com.bloodBank.Activities.LoginActivity;
 import smartSystems.com.bloodBank.Activities.UserActivity;
+import smartSystems.com.bloodBank.IdlingResource.SimpleIdlingResource;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -20,6 +26,21 @@ public class LoginActivityTest {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule(LoginActivity.class);
+
+    private SimpleIdlingResource mIdlingResource;
+
+    @Before
+    public void registerIntentServiceIdlingResource() {
+        LoginActivity activity = mActivityRule.getActivity();
+        mIdlingResource = new SimpleIdlingResource(activity);
+        Espresso.registerIdlingResources(mIdlingResource);
+    }
+
+    @After
+    public void unregisterIntentServiceIdlingResource() {
+        Espresso.unregisterIdlingResources(mIdlingResource);
+    }
+
 
     @Test
     public void login() {
