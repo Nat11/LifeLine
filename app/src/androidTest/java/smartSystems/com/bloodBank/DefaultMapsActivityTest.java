@@ -4,6 +4,7 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.UiThreadTestRule;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -86,6 +87,14 @@ public class DefaultMapsActivityTest {
             place.setLongitude(LocationGenerator.longitude());
         }
 
+        Log.i("places", String.valueOf(places.size()));
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         threadTestRule.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -95,6 +104,7 @@ public class DefaultMapsActivityTest {
                 }
             }
         });
+
 
     }
 

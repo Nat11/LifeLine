@@ -65,4 +65,20 @@ public class LoginActivityTest {
         onView(withId(R.id.txtUser)).check(matches(isDisplayed()));
 
     }
+
+    @Test
+    public void register() {
+        onView(withId(R.id.btnRegister)).perform(click());
+
+        // check if register activity is opened
+        onView(withId(R.id.AutoCompleteAddress)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void resetPassword() {
+        onView(withId(R.id.btnForgetPass)).perform(click());
+
+        // check if forgot password activity is opened
+        onView(withId(R.id.btnResetPass)).check(matches(isDisplayed()));
+    }
 }
