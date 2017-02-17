@@ -12,7 +12,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="smartSystems.com.bloodBank.Activities.SearchResultActivity">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/user_list_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"

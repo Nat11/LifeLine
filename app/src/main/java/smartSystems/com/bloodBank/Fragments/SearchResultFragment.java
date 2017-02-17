@@ -72,7 +72,6 @@ public class SearchResultFragment extends ListFragment {
     public static List<String> ids = new ArrayList<>();
     private static String userName;
     private static Map<String, String> keysUserNames = new HashMap<>();
-    private ProgressDialog progressDialog;
     public static Map<String, User> userMap = new HashMap<>();
 
     public SearchResultFragment() {

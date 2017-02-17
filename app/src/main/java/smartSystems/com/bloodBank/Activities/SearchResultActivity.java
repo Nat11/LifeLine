@@ -59,26 +59,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
     private static final String TAG = "SearchResultActivity";
     private String searchedBloodType;
     private int searchedDistance;
-    private DatabaseReference mDatabase;
-    private static String currentDonor, bloodType;
-    private static String isDonor;
-    private static String currentAddress;
-    private static String address;
-    private static LatLng currentLatLng;
-    public static List<String> userNameBloodList = new ArrayList<>();
-    private static List<User> usersList = new ArrayList<>();
-    static Map<String, String> users = new HashMap<>();
-    ArrayAdapter<String> adapter;
-    private static List<LatLng> addresses = new ArrayList<>();
-    public static List<String> ids = new ArrayList<>();
     private Button btnSwitchToMaps;
-    Parcelable state;
-    private static String userName;
-    private ListView lv;
-    private static Map<String, String> keysUserNames = new HashMap<>();
-    private ProgressDialog progressDialog;
     private boolean mTablet;
-    public static Map<String, User> userMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

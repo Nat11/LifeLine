@@ -1,8 +1,11 @@
 package smartSystems.com.bloodBank.Fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,7 @@ import smartSystems.com.bloodBank.R;
 public class DetailActivityFragment extends Fragment {
 
     private User mUser;
-    private static final String ARG_USER_ID = "productId";
+    private static final String ARG_USER_ID = "userId";
 
     public DetailActivityFragment() {
         // Required empty public constructor
@@ -35,7 +38,7 @@ public class DetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             String userId = getArguments().getString(ARG_USER_ID);
-            mUser = SearchResultActivity.userMap.get(userId);
+            mUser = SearchResultFragment.userMap.get(userId);
         }
     }
 
@@ -59,6 +62,20 @@ public class DetailActivityFragment extends Fragment {
 
         Button btnSendEmail = (Button) view.findViewById(R.id.btnSendEmail);
 
+        btnSendEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] addresses = {mUser.getUsername()};
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"));
+                intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Blood donation request");
+                intent.putExtra(Intent.EXTRA_TEXT, "I saw your profile on the blood bank application");
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
         return view;
     }
 

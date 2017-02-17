@@ -44,17 +44,11 @@ public class DetailActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         id = getIntent().getStringExtra("id");
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-
         tvUsername = (TextView) findViewById(R.id.tvUsername);
         tvBloodType = (TextView) findViewById(R.id.tvBloodType);
         tvAddress = (TextView) findViewById(R.id.tvAddress);
         tvPhone = (TextView) findViewById(R.id.tvPhone);
         btnSendEmail = (Button) findViewById(R.id.btnSendEmail);
-
-        progressDialog.show();
 
         mDatabase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -69,7 +63,6 @@ public class DetailActivity extends AppCompatActivity {
                 tvUsername.setText(userName);
                 tvAddress.setText(address);
                 tvPhone.setText(phone);
-                progressDialog.dismiss();
             }
 
             @Override
