@@ -4,12 +4,9 @@ package smartSystems.com.bloodBank.Fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import smartSystems.com.bloodBank.Activities.AdvancedSearchActivity;
-import smartSystems.com.bloodBank.Activities.SearchResultActivity;
+import smartSystems.com.bloodBank.Activities.MapsActivity;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
 
@@ -73,6 +71,8 @@ public class SearchResultFragment extends ListFragment {
     private static String userName;
     private static Map<String, String> keysUserNames = new HashMap<>();
     public static Map<String, User> userMap = new HashMap<>();
+    private Button btnSwitchToMaps;
+    ProgressDialog progressDialog;
 
     public SearchResultFragment() {
     }
@@ -98,6 +98,11 @@ public class SearchResultFragment extends ListFragment {
 
         Bundle args = getArguments();
 
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
         if (args != null) {
             String bloodType = args.getString("searchedBloodType");
             int distance = args.getInt("searchedDistance");
@@ -121,11 +126,8 @@ public class SearchResultFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-
-
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
-
+        btnSwitchToMaps = (Button) view.findViewById(R.id.btnSwitchToMaps);
         return view;
     }
 
@@ -184,6 +186,15 @@ public class SearchResultFragment extends ListFragment {
                                 android.R.layout.simple_list_item_1,
                                 userNameBloodList);
                         setListAdapter(adapter);
+
+                        btnSwitchToMaps.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                goToMaps(addresses, usersList, keysUserNames);
+                            }
+                        });
+                        progressDialog.dismiss();
+
                     }
 
                     @Override
@@ -261,6 +272,14 @@ public class SearchResultFragment extends ListFragment {
         users.clear();
         userNameBloodList.clear();
         addresses.clear();
+    }
+
+    public void goToMaps(List<LatLng> addresses, List<User> usersList, Map<String, String> keysUserNames) {
+        Intent intent = new Intent(getActivity(), MapsActivity.class);
+        intent.putExtra("ADDRESSES", (Serializable) addresses);
+        intent.putExtra("KEYSUSERNAMES", (Serializable) keysUserNames);
+        intent.putExtra("USERS", (Serializable) usersList);
+        startActivity(intent);
     }
 
     @Override
