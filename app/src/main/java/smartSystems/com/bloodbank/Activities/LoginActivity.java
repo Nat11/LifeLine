@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.core.deps.guava.annotations.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -188,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
-     */
+
     @VisibleForTesting
     @NonNull
     public IdlingResource getIdlingResource() {
@@ -197,5 +196,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return mIdlingResource;
     }
-
+*/
 }

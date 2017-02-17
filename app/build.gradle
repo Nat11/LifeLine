@@ -37,10 +37,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    androidTestCompile('com.android.support.test:runner:0.5', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestCompile 'com.android.support.test:runner:0.5'
 
     androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2.2') {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -53,27 +57,26 @@ dependencies {
         exclude group: 'com.android.support', module: 'design'
     }
 
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.google.firebase:firebase-config:10.0.0'
-    compile 'com.google.firebase:firebase-auth:10.0.0'
-    compile 'com.android.support:design:25.0.1'
-    compile 'com.google.firebase:firebase-database:10.0.0'
-    compile 'com.google.android.gms:play-services:10.0.0'
-    compile 'com.google.maps.android:android-maps-utils:0.4+'
-    compile 'com.google.android.gms:play-services-maps:10.0.0'
-    compile 'com.jakewharton:butterknife:6.0.0'
-    testCompile 'junit:junit:4.12'
-
     // Dependencies for local unit tests
     testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
     testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
     testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
     testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
-    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0'
     compile 'com.android.support.test.espresso:espresso-idling-resource:' + rootProject.espressoVersion;
-    androidTestCompile 'org.exparity:exparity-stub:1.+'
 
-    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.google.firebase:firebase-config:10.0.1'
+    compile 'com.google.firebase:firebase-auth:10.0.1'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.google.maps.android:android-maps-utils:0.4.+'
+    compile 'com.google.android.gms:play-services-maps:10.0.1'
+    compile 'com.jakewharton:butterknife:6.0.0'
+    compile 'com.android.support:support-v4:25.1.1'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0'
+    androidTestCompile 'org.exparity:exparity-stub:1.+'
 }
 
 apply plugin: 'com.google.gms.google-services'

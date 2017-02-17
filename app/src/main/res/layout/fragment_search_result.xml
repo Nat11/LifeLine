@@ -9,12 +9,23 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="smartSystems.com.bloodBank.Activities.SearchResultActivity">
+    tools:context="smartSystems.com.bloodBank.Fragments.SearchResultFragment">
 
-    <FrameLayout
-        android:id="@+id/user_list_fragment"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
+    <Button
+        android:id="@+id/btnSwitchToMaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/red_button_bg"
+        android:text="@string/switch_to_maps_view"
+        android:textColor="@color/white" />
+
 </LinearLayout>
+
+
+

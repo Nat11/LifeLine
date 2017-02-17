@@ -1,22 +1,22 @@
-package smartSystems.com.bloodBank.Activities;
+package smartSystems.com.bloodBank.Fragments;
+
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.AttributeSet;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,7 +41,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,16 +48,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import smartSystems.com.bloodBank.Fragments.DetailActivityFragment;
-import smartSystems.com.bloodBank.Fragments.SearchResultFragment;
+import smartSystems.com.bloodBank.Activities.AdvancedSearchActivity;
+import smartSystems.com.bloodBank.Activities.SearchResultActivity;
 import smartSystems.com.bloodBank.Model.User;
 import smartSystems.com.bloodBank.R;
 
-public class SearchResultActivity extends AppCompatActivity implements SearchResultFragment.ListFragmentListener {
+public class SearchResultFragment extends ListFragment {
 
-    private static final String TAG = "SearchResultActivity";
-    private String searchedBloodType;
-    private int searchedDistance;
+    private ListFragmentListener mListener;
+
+    private static String searchedBloodType;
+    private static int searchedDistance;
     private DatabaseReference mDatabase;
     private static String currentDonor, bloodType;
     private static String isDonor;
@@ -68,55 +68,71 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
     public static List<String> userNameBloodList = new ArrayList<>();
     private static List<User> usersList = new ArrayList<>();
     static Map<String, String> users = new HashMap<>();
-    ArrayAdapter<String> adapter;
     private static List<LatLng> addresses = new ArrayList<>();
     public static List<String> ids = new ArrayList<>();
-    private Button btnSwitchToMaps;
-    Parcelable state;
     private static String userName;
-    private ListView lv;
     private static Map<String, String> keysUserNames = new HashMap<>();
     private ProgressDialog progressDialog;
-    private boolean mTablet;
     public static Map<String, User> userMap = new HashMap<>();
 
+    public SearchResultFragment() {
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ListFragmentListener) {
+            mListener = (ListFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement ListFragmentListener");
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_result);
-
-        searchedBloodType = getIntent().getStringExtra("blood");
-        searchedDistance = getIntent().getIntExtra("distance", 0);
-
-        SearchResultFragment fragment = SearchResultFragment.newInstance(searchedBloodType, searchedDistance);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.user_list_fragment, fragment)
-                .commit();
-
-        /*progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        btnSwitchToMaps = (Button) findViewById(R.id.btnSwitchToMaps);
-        mDatabase = FirebaseDatabase.getInstance().getReference();*/
+        Bundle args = getArguments();
 
-        //check if app is running on phone or tablet
-        FrameLayout fragmentContainer = (FrameLayout) findViewById(R.id.detail_fragment_container);
-        mTablet = (fragmentContainer != null);
-        Log.i(TAG, "onCreate: mTablet" + mTablet);
-
-
-        /*clearLists();
-        loadData();*/
+        if (args != null) {
+            String bloodType = args.getString("searchedBloodType");
+            int distance = args.getInt("searchedDistance");
+            searchedBloodType = bloodType;
+            searchedDistance = distance;
+            loadData(searchedBloodType, searchedDistance);
+        }
     }
 
-    /*public void loadData() {
+    public static SearchResultFragment newInstance(String arg1, int arg2) {
+
+        Bundle args = new Bundle();
+        args.putString("searchedBloodType", arg1);
+        args.putInt("searchedDistance", arg2);
+        SearchResultFragment fragment = new SearchResultFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+
+
+        View view = inflater.inflate(R.layout.fragment_search_result, container, false);
+
+        return view;
+    }
+
+    public void loadData(final String mBloodType, final int mDistance) {
+        Log.d("searched blood ", searchedBloodType);
+
         final FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
         mDatabase.child("users").child(current.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -145,7 +161,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
                             address = user.getAddress();
                             bloodType = user.getBloodType();
                             double distance = SphericalUtil.computeDistanceBetween(currentLatLng, getLatLng(address));
-                            if (bloodType.equals(searchedBloodType) && distance / 1000 < searchedDistance) { //divise by 1000 to get distance in Kilometers
+                            if (bloodType.equals(mBloodType) && distance / 1000 < mDistance) { //divise by 1000 to get distance in Kilometers
                                 users.put(snapshot.getKey(), user.getBloodType() + " : " + user.getUsername()); //display searchedBloodType and username in ListView
                                 addresses.add(getLatLng(address));
                                 userMap.put(snapshot.getKey(), user);
@@ -154,38 +170,21 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
                             }
                         }
                         if (users.size() == 0) {
-                            Toast.makeText(SearchResultActivity.this, "Invalid search criteria, please change your choices", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
+                            Toast.makeText(getActivity(), "Invalid search criteria, please change your choices", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getActivity(), AdvancedSearchActivity.class));
 
                         } else {
                             userNameBloodList = new ArrayList<>(users.values());
                             Collections.sort(userNameBloodList);//Sort userNameBloodList by values
-                            adapter = new ArrayAdapter<>(
-                                    SearchResultActivity.this,
-                                    android.R.layout.simple_list_item_1,
-                                    userNameBloodList);
-                            ids = new ArrayList<String>(users.keySet());
-                            lv.setAdapter(adapter);
-                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Intent intent = new Intent(SearchResultActivity.this, DetailActivity.class);
-                                    String id = ids.get(i);
-                                    intent.putExtra("id", id);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            btnSwitchToMaps.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    goToMaps(addresses, usersList, keysUserNames);
-                                }
-                            });
-
+                            ids = new ArrayList<>(users.keySet());
                         }
-                        progressDialog.dismiss();
+                        Log.d("test users size", String.valueOf(userNameBloodList.size()));
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                                getActivity(),
+                                android.R.layout.simple_list_item_1,
+                                userNameBloodList);
+                        setListAdapter(adapter);
                     }
 
                     @Override
@@ -199,6 +198,17 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
                 Log.w("UserInfo", "getUser:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        String userId = ids.get(position);
+        mListener.onListItemClick(userId);
+    }
+
+    public interface ListFragmentListener {
+        void onListItemClick(String id);
     }
 
     public LatLng getLatLng(String address) {
@@ -248,39 +258,15 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
         return new LatLng(lat, lng);
     }
 
-    public void goToMaps(List<LatLng> addresses, List<User> usersList, Map<String, String> keysUserNames) {
-        Intent intent = new Intent(SearchResultActivity.this, MapsActivity.class);
-        intent.putExtra("ADDRESSES", (Serializable) addresses);
-        intent.putExtra("KEYSUSERNAMES", (Serializable) keysUserNames);
-        intent.putExtra("USERS", (Serializable) usersList);
-        startActivity(intent);
-    }
-
     public void clearLists() {
         users.clear();
         userNameBloodList.clear();
         addresses.clear();
     }
-*/
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(SearchResultActivity.this, AdvancedSearchActivity.class));
-    }
 
     @Override
-    public void onListItemClick(String id) {
-
-        if (mTablet) {
-            DetailActivityFragment fragment = DetailActivityFragment.newInstance(id);
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_fragment_container, fragment)
-                    .commit();
-        } else {
-            Intent intent = new Intent(SearchResultActivity.this, DetailActivity.class);
-            intent.putExtra("id", id);
-            startActivity(intent);
-        }
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

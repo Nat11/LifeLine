@@ -104,11 +104,9 @@ public class DefaultMapsActivityTest {
                 }
             }
         });
-
-
     }
 
-   /* @Test
+    @Test
     public void clickOnSearchButton_ShowsAdvancedSearch() {
 
         onView(withId(R.id.fabSearch)).perform(click());
@@ -116,6 +114,6 @@ public class DefaultMapsActivityTest {
         // Check that DefaultMaps Activity was opened.
         onView(withId(R.id.btnBeginSearch)).check(matches(isDisplayed()));
     }
-*/
+
 
 }
